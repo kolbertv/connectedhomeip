@@ -62,9 +62,10 @@ class ServerCallback : public SecureSessionMgrDelegate
 {
 public:
     void OnMessageReceived(const PacketHeader & header, const PayloadHeader & payloadHeader,
-                           const Transport::PeerConnectionState * state, System::PacketBufferHandle buffer,
+                           SecureSessionHandle session, System::PacketBufferHandle buffer,
                            SecureSessionMgr * mgr) override
     {
+        auto state = mgr->GetPeerConnectionState(session);
         const size_t data_len = buffer->DataLength();
         char src_addr[PeerAddress::kMaxToStringSize];
 
@@ -78,7 +79,7 @@ public:
 
         ChipLogProgress(AppServer, "Packet received from %s: %zu bytes", src_addr, static_cast<size_t>(data_len));
 
-        HandleDataModelMessage(header, std::move(buffer), mgr);
+        HandleDataModelMessage(session, header, std::move(buffer), mgr);
 
     exit:;
     }
@@ -92,7 +93,7 @@ public:
         }
     }
 
-    void OnNewConnection(const Transport::PeerConnectionState * state, SecureSessionMgr * mgr) override
+    void OnNewConnection(SecureSessionHandle session, SecureSessionMgr * mgr) override
     {
         ChipLogProgress(AppServer, "Received a new connection.");
     }
@@ -176,13 +177,12 @@ void InitServer(AppDelegate * delegate)
         SuccessOrExit(err);
     }
 
-    err = Mdns::ServiceAdvertiser::Instance().Start(&DeviceLayer::InetLayer, chip::Mdns::kMdnsPort);
-    SuccessOrExit(err);
-
+    gSessions.SetDelegate(&gCallbacks);
     err = gSessions.NewPairing(peer, chip::kTestControllerNodeId, &gTestPairing);
     SuccessOrExit(err);
 
-    gSessions.SetDelegate(&gCallbacks);
+    err = Mdns::ServiceAdvertiser::Instance().Start(&DeviceLayer::InetLayer, chip::Mdns::kMdnsPort);
+    SuccessOrExit(err);
 
 exit:
     if (err != CHIP_NO_ERROR)
