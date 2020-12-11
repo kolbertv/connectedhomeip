@@ -117,7 +117,8 @@ static size_t BinaryBytesToPrintableString(const uint8_t * bytes, size_t bytes_l
     return required;
 }
 
-void ProcessOthersMessage(SecureSessionHandle session, const PacketHeader & header, System::PacketBufferHandle & buffer, SecureSessionMgr * mgr)
+void ProcessOthersMessage(SecureSessionHandle session, const PacketHeader & header, System::PacketBufferHandle & buffer,
+                          SecureSessionMgr * mgr)
 {
     CHIP_ERROR err;
     char logmsg[512];
@@ -177,7 +178,8 @@ void ProcessDataModelMessage(const PacketHeader & header, System::PacketBufferHa
  * @param [in] buffer The buffer holding the message.  This function guarantees
  *                    that it will free the buffer before returning.
  */
-void HandleDataModelMessage(SecureSessionHandle session, const PacketHeader & header, System::PacketBufferHandle buffer, SecureSessionMgr * mgr)
+void HandleDataModelMessage(SecureSessionHandle session, const PacketHeader & header, System::PacketBufferHandle buffer,
+                            SecureSessionMgr * mgr)
 {
     // FIXME: Long-term we shouldn't be guessing what sort of message this is
     // based on the message bytes.  We're doing this for now to support both

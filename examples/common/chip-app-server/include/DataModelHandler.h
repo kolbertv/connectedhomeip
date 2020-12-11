@@ -33,6 +33,6 @@
  * @param [in] buffer The buffer holding the message.  This function guarantees
  *                    that it will free the buffer before returning.
  */
-void HandleDataModelMessage(chip::SecureSessionHandle session, const chip::PacketHeader & header, chip::System::PacketBufferHandle buffer,
-                            chip::SecureSessionMgr * mgr);
+void HandleDataModelMessage(chip::SecureSessionHandle session, const chip::PacketHeader & header,
+                            chip::System::PacketBufferHandle buffer, chip::SecureSessionMgr * mgr);
 void InitDataModelHandler();
